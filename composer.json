@@ -1,8 +1,13 @@
 {
-	"name": "studentbox/backup",
-	"description": "Backup files and MySQL database from StudentBox to Amazon S3",
-	"license": "GPL-3.0+",
+    "name": "studentbox/backup",
+    "description": "Backup files and MySQL database from StudentBox to Amazon S3",
+    "license": "GPL-3.0+",
     "require": {
         "aws/aws-sdk-php": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Studentbox\\Backup\\": "src/"
+        }
     }
 }
