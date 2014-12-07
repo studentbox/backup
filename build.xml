@@ -39,8 +39,42 @@
         <mkdir dir="${basedir}/build/phpdox"/>
         <property name="prepare.done" value="true"/>
     </target>
+    
+    <target name="composer-self-update" description="Self-update Composer">
+        <exec executable="php">
+            <arg value="${basedir}/build/tools/composer.phar" />
+            <arg value="self-update" />
+            <arg value="--quiet" />
+            <arg value="--no-interaction" />
+        </exec>
+    </target>
+    
+    <target name="composer-dev" depends="composer-self-update">
+        <condition property="composer.command" value="update" else="install">
+            <available file="${basedir}/composer.lock"/>
+        </condition>
+        <exec executable="php">
+            <arg value="${basedir}/build/tools/composer.phar" />
+            <arg value="${composer.command}" />
+            <arg value="--no-interaction" />
+            <arg value="--dev" />
+        </exec>
+    </target>
+    
+    <target name="composer-no-dev" depends="composer-self-update">
+        <condition property="composer.command" value="update" else="install">
+            <available file="${basedir}/composer.lock"/>
+        </condition>
+        <exec executable="php">
+            <arg value="${basedir}/build/tools/composer.phar" />
+            <arg value="${composer.command}" />
+            <arg value="--no-interaction" />
+            <arg value="--optimize-autoloader" />
+            <arg value="--no-dev" />
+        </exec>
+    </target>
 
-    <target name="lint" description="Perform syntax check of sourcecode files">
+    <target name="lint" depends="composer-dev" description="Perform syntax check of sourcecode files">
         <apply executable="php" failonerror="true">
             <arg value="-l" />
 
@@ -162,7 +196,7 @@
     </target>
 
     <target name="phpunit"
-            depends="prepare"
+            depends="prepare, composer-dev"
             description="Run unit tests with PHPUnit">
         <exec executable="php" failonerror="true">
             <arg value="${toolsdir}phpunit.phar" />
