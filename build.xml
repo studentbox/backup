@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Backup" default="build">
-    <property name="toolsdir" value="${basedir}/build/tools/"/>
+    <property name="toolsdir" value="${basedir}/vendor/bin/"/>
 
     <target name="build"
-            depends="prepare,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,phpunit,phpdox"
+            depends="prepare,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,phpunit"
             description=""/>
 
     <target name="build-parallel"
-            depends="prepare,lint,tools-parallel,phpunit,phpdox"
+            depends="prepare,lint,tools-parallel,phpunit"
             description=""/>
 
     <target name="tools-parallel" description="Run tools in parallel">
@@ -27,7 +27,6 @@
         <delete dir="${basedir}/build/coverage"/>
         <delete dir="${basedir}/build/logs"/>
         <delete dir="${basedir}/build/pdepend"/>
-        <delete dir="${basedir}/build/phpdox"/>
         <property name="clean.done" value="true"/>
     </target>
 
@@ -36,7 +35,6 @@
         <mkdir dir="${basedir}/build/coverage"/>
         <mkdir dir="${basedir}/build/logs"/>
         <mkdir dir="${basedir}/build/pdepend"/>
-        <mkdir dir="${basedir}/build/phpdox"/>
         <property name="prepare.done" value="true"/>
     </target>
     
@@ -91,9 +89,14 @@
     </target>
 
     <target name="phploc"
+            depends="composer-dev"
             description="Measure project size using PHPLOC and print human readable output. Intended for usage on the command line.">
-        <exec executable="php">
-            <arg value="${toolsdir}phploc.phar" />
+        <exec executable="${toolsdir}phploc" osfamily="unix">
+            <arg value="--count-tests" />
+            <arg path="${basedir}/src" />
+            <arg path="${basedir}/tests" />
+        </exec>
+        <exec executable="${toolsdir}phploc.bat" osfamily="windows">
             <arg value="--count-tests" />
             <arg path="${basedir}/src" />
             <arg path="${basedir}/tests" />
@@ -101,10 +104,18 @@
     </target>
 
     <target name="phploc-ci"
-            depends="prepare"
+            depends="prepare, composer-dev"
             description="Measure project size using PHPLOC and log result in CSV and XML format. Intended for usage within a continuous integration environment.">
-        <exec executable="php">
-            <arg value="${toolsdir}phploc.phar" />
+        <exec executable="${toolsdir}phploc" osfamily="unix">
+            <arg value="--count-tests" />
+            <arg value="--log-csv" />
+            <arg path="${basedir}/build/logs/phploc.csv" />
+            <arg value="--log-xml" />
+            <arg path="${basedir}/build/logs/phploc.xml" />
+            <arg path="${basedir}/src" />
+            <arg path="${basedir}/tests" />
+        </exec>
+        <exec executable="${toolsdir}phploc.bat" osfamily="windows">
             <arg value="--count-tests" />
             <arg value="--log-csv" />
             <arg path="${basedir}/build/logs/phploc.csv" />
@@ -116,10 +127,15 @@
     </target>
 
     <target name="pdepend"
-            depends="prepare"
+            depends="prepare, composer-dev"
             description="Calculate software metrics using PHP_Depend and log result in XML format. Intended for usage within a continuous integration environment.">
-        <exec executable="php">
-            <arg value="${toolsdir}pdepend.phar" />
+        <exec executable="${toolsdir}pdepend" osfamily="unix">
+            <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
+            <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
+            <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+            <arg path="${basedir}/src" />
+        </exec>
+        <exec executable="${toolsdir}pdepend.bat" osfamily="windows">
             <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
@@ -128,9 +144,14 @@
     </target>
 
     <target name="phpmd"
+            depends="composer-dev"
             description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
-        <exec executable="php">
-            <arg value="${toolsdir}phpmd.phar" />
+        <exec executable="${toolsdir}phpmd" osfamily="unix">
+            <arg path="${basedir}/src" />
+            <arg value="text" />
+            <arg path="${basedir}/build/phpmd.xml" />
+        </exec>
+        <exec executable="${toolsdir}phpmd.bat" osfamily="windows">
             <arg path="${basedir}/src" />
             <arg value="text" />
             <arg path="${basedir}/build/phpmd.xml" />
@@ -138,10 +159,16 @@
     </target>
 
     <target name="phpmd-ci"
-            depends="prepare"
+            depends="prepare, composer-dev"
             description="Perform project mess detection using PHPMD and log result in XML format. Intended for usage within a continuous integration environment.">
-        <exec executable="php">
-            <arg value="${toolsdir}phpmd.phar" />
+        <exec executable="${toolsdir}phpmd" osfamily="unix">
+            <arg path="${basedir}/src" />
+            <arg value="xml" />
+            <arg path="${basedir}/build/phpmd.xml" />
+            <arg value="--reportfile" />
+            <arg path="${basedir}/build/logs/pmd.xml" />
+        </exec>
+        <exec executable="${toolsdir}phpmd.bat" osfamily="windows">
             <arg path="${basedir}/src" />
             <arg value="xml" />
             <arg path="${basedir}/build/phpmd.xml" />
@@ -151,9 +178,16 @@
     </target>
 
     <target name="phpcs"
+            depends="composer-dev"
             description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-        <exec executable="php">
-            <arg value="${toolsdir}phpcs.phar" />
+        <exec executable="${toolsdir}phpcs" osfamily="unix">
+            <arg value="--standard=PSR2" />
+            <arg value="--extensions=php" />
+            <arg value="--ignore=autoload.php" />
+            <arg path="${basedir}/src" />
+            <arg path="${basedir}/tests" />
+        </exec>
+        <exec executable="${toolsdir}phpcs.bat" osfamily="windows">
             <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
             <arg value="--ignore=autoload.php" />
@@ -163,10 +197,17 @@
     </target>
 
     <target name="phpcs-ci"
-            depends="prepare"
+            depends="prepare, composer-dev"
             description="Find coding standard violations using PHP_CodeSniffer and log result in XML format. Intended for usage within a continuous integration environment.">
-        <exec executable="php">
-            <arg value="${toolsdir}phpcs.phar" />
+        <exec executable="${toolsdir}phpcs" osfamily="unix">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
+            <arg value="--standard=PSR2" />
+            <arg value="--extensions=php" />
+            <arg value="--ignore=autoload.php" />
+            <arg path="${basedir}/src" />
+        </exec>
+        <exec executable="${toolsdir}phpcs.bat" osfamily="windows">
             <arg value="--report=checkstyle" />
             <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
             <arg value="--standard=PSR2" />
@@ -177,18 +218,25 @@
     </target>
 
     <target name="phpcpd"
+            depends="composer-dev"
             description="Find duplicate code using PHPCPD and print human readable output. Intended for usage on the command line before committing.">
-        <exec executable="php">
-            <arg value="${toolsdir}phpcpd.phar" />
+        <exec executable="${toolsdir}phpcpd" osfamily="unix">
+            <arg path="${basedir}/src" />
+        </exec>
+        <exec executable="${toolsdir}phpcpd.bat" osfamily="windows">
             <arg path="${basedir}/src" />
         </exec>
     </target>
 
     <target name="phpcpd-ci"
-            depends="prepare"
+            depends="prepare, composer-dev"
             description="Find duplicate code using PHPCPD and log result in XML format. Intended for usage within a continuous integration environment.">
-        <exec executable="php">
-            <arg value="${toolsdir}phpcpd.phar" />
+        <exec executable="${toolsdir}phpcpd" osfamily="unix">
+            <arg value="--log-pmd" />
+            <arg path="${basedir}/build/logs/pmd-cpd.xml" />
+            <arg path="${basedir}/src" />
+        </exec>
+        <exec executable="${toolsdir}phpcpd.bat" osfamily="windows">
             <arg value="--log-pmd" />
             <arg path="${basedir}/build/logs/pmd-cpd.xml" />
             <arg path="${basedir}/src" />
@@ -198,18 +246,13 @@
     <target name="phpunit"
             depends="prepare, composer-dev"
             description="Run unit tests with PHPUnit">
-        <exec executable="php" failonerror="true">
-            <arg value="${toolsdir}phpunit.phar" />
+        <exec executable="${toolsdir}phpunit" failonerror="true" osfamily="unix">
             <arg value="--configuration"/>
             <arg path="${basedir}/build/phpunit.xml"/>
         </exec>
-    </target>
-
-    <target name="phpdox"
-            depends="phploc-ci,phpcs-ci,phpmd-ci"
-            description="Generate project documentation using phpDox">
-        <exec executable="php" dir="${basedir}/build">
-            <arg value="${toolsdir}phpdox.phar" />
+        <exec executable="${toolsdir}phpunit.bat" failonerror="true" osfamily="windows">
+            <arg value="--configuration"/>
+            <arg path="${basedir}/build/phpunit.xml"/>
         </exec>
     </target>
 </project>

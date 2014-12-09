@@ -6,6 +6,11 @@
         "aws/aws-sdk-php": "2.*"
     },
     "require-dev": {
+        "phploc/phploc": "@stable",
+        "pdepend/pdepend" : "@stable",
+        "phpmd/phpmd" : "@stable",
+        "squizlabs/php_codesniffer": "@stable",
+        "sebastian/phpcpd": "@stable",
         "phpunit/phpunit": "4.4.*"
     },
     "autoload": {
