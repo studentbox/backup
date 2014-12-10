@@ -156,7 +156,6 @@
             <arg value="${toolsdir}phpcs.phar" />
             <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
-            <arg value="--ignore=autoload.php" />
             <arg path="${basedir}/src" />
             <arg path="${basedir}/tests" />
         </exec>
@@ -173,6 +172,18 @@
             <arg value="--extensions=php" />
             <arg value="--ignore=autoload.php" />
             <arg path="${basedir}/src" />
+        </exec>
+    </target>
+    
+    <target name="phpcbf"
+            description="Fix many errors and warnings from PHP_CodeSniffer automatically. Intended for usage on the command linebefore committing. before committing.">
+        <exec executable="php">
+            <arg value="${toolsdir}phpcbf.phar" />
+            <arg value="--no-patch"/>
+            <arg value="--standard=PSR2" />
+            <arg value="--extensions=php" />
+            <arg path="${basedir}/src" />
+            <arg path="${basedir}/tests" />
         </exec>
     </target>
 
