@@ -19,11 +19,17 @@
 
 namespace Studentbox\Backup;
 
+use Aws\S3\S3Client;
+
 /**
  * Diese Klasse synchronisiert mehrere Ordner mit dem Cloudspeicherdienst Amazon S3.
  *
  * @author Fabian Wüthrich
  */
 class S3 {
-    //put your code here
+
+    public function test() {
+        return true;
+    }
+
 }
