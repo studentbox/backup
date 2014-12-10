@@ -3,11 +3,11 @@
     <property name="toolsdir" value="${basedir}/build/tools/"/>
 
     <target name="build"
-            depends="prepare,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,phpunit,phpdoc"
+            depends="prepare,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,phpunit,phpdoc, composer-no-dev"
             description=""/>
 
     <target name="build-parallel"
-            depends="prepare,lint,tools-parallel,phpunit,phpdoc"
+            depends="prepare,lint,tools-parallel,phpunit,phpdoc, composer-no-dev"
             description=""/>
 
     <target name="tools-parallel" description="Run tools in parallel">
