@@ -1,4 +1,4 @@
-[![Build Status](https://scrutinizer-ci.com/g/studentbox/backup/badges/build.png?b=master)](https://scrutinizer-ci.com/g/studentbox/backup/build-status/master)
+[![Build Status](https://travis-ci.org/studentbox/backup.svg?branch=master)](https://travis-ci.org/studentbox/backup)
 [![Code Coverage](https://scrutinizer-ci.com/g/studentbox/backup/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/studentbox/backup/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/studentbox/backup/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/studentbox/backup/?branch=master)
 
