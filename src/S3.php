@@ -26,10 +26,11 @@ use Aws\S3\S3Client;
  *
  * @author Fabian Wüthrich
  */
-class S3 {
+class S3
+{
 
-    public function test() {
+    public function test()
+    {
         return true;
     }
-
 }

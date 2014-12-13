@@ -24,6 +24,7 @@ namespace Studentbox\Backup;
  *
  * @author Fabian Wüthrich
  */
-class Database {
+class Database
+{
     //put your code here
 }
