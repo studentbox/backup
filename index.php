@@ -18,3 +18,24 @@
  */
 
 require 'vendor/autoload.php';
+
+use Aws\S3\S3Client;
+use Studentbox\Backup\S3Backup;
+
+$config = require 'config/local.php';
+
+$s3Client = S3Client::factory(array(
+            'key' => $config['s3backup']['key'],
+            'secret' => $config['s3backup']['secret'],
+            'region' => $config['s3backup']['region'],
+        ));
+
+$s3Backup = new S3Backup($s3Client);
+$s3Backup->setBucketName($config['s3backup']['bucketname']);
+$s3Backup->setFolders($config['s3backup']['folders']);
+
+if($s3Backup->backupToS3()) {
+    echo 'Backup der Verzeichnisse ' . implode(", ", $config['s3backup']['folders']) . ' erfolgreich';
+} else {
+    echo 'Backup fehlgeschlagen';
+}

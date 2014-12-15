@@ -30,4 +30,35 @@
  */
 
 return array(
+    /**
+     * S3-Backup Einstellungen
+     */
+    's3backup' => array(
+        /**
+         * AWS Access Key ID
+         */
+        'key' => '',
+        /**
+         * AWS Secret Access Key
+         */
+        'secret' => '',
+        /**
+         * Regional Endpoint des Amazon S3 Services
+         */
+        'region' => '',
+        /**
+         * Name des Backup-Buckets
+         */
+        'bucketname' => '',
+        /**
+         * Array mit Order-Pfaden für das Backup
+         */
+        'folders' => array(
+            '',
+        ),
+    ),
+    /**
+     * Datenbank Einstellungen
+     */
+    'database' => array(),
 );
