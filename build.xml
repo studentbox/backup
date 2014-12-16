@@ -74,7 +74,7 @@
         </exec>
     </target>
 
-    <target name="lint" depends="composer-dev" description="Perform syntax check of sourcecode files">
+    <target name="lint" description="Perform syntax check of sourcecode files">
         <apply executable="php" failonerror="true">
             <arg value="-l" />
 
