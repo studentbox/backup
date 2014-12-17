@@ -257,7 +257,7 @@ class Database
     /**
      * Setzt Pfad zu mysqldump.
      *
-     * @param type $mysqldumpPath Pfad zu mysqldump
+     * @param string $mysqldumpPath Pfad zu mysqldump
      * @return \Studentbox\Backup\Database
      */
     public function setMysqldumpPath($mysqldumpPath)
@@ -370,7 +370,6 @@ class Database
      */
     public function writeDumpToS3($databasedump)
     {
-        $result = array();
         $key = 'dbdumbs/db_dumb_' . $this->databasename . '_' . date('Ymd') . '.sql';
         $bucket = $this->getBucketname();
         $result = $this->s3Client->putObject(array(
