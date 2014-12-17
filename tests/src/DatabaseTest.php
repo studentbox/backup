@@ -203,6 +203,9 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($this->database->getSettings());
     }
 
+    /**
+     * Testet die Einstellungen über den Konstruktor.
+     */
     public function testSettingsOverConstructor()
     {
         $database = new Database($this->s3Client, $this->testarray);
@@ -232,4 +235,5 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
                 ->willThrowException(new S3Exception);
         $this->assertEmpty($this->database->writeDumpToS3($this->databasedump));
     }
+
 }
