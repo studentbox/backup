@@ -117,6 +117,7 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
         $this->s3Backup->setBucketName('');
 
         $this->assertFalse($this->s3Backup->backupToS3());
+        $this->expectOutputRegex("/./");
     }
 
     /**
@@ -125,6 +126,7 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
     public function testBackupToS3WithoutFolderArray()
     {
         $this->assertFalse($this->s3Backup->backupToS3());
+        $this->expectOutputRegex("/./");
     }
 
     /**
