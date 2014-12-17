@@ -60,5 +60,38 @@ return array(
     /**
      * Datenbank Einstellungen
      */
-    'database' => array(),
+    'database' => array(
+        /**
+         * Adresse des Datenbank-Hosts
+         */
+        'host' => 'localhost',
+        /**
+         * Benutzername des Datenbank-Benutzers
+         */
+        'username' => '',
+        /**
+         * Passwort des Datenbank-Benutzers
+         */
+        'password' => '',
+        /**
+         * Port des Datenbank-Hosts
+         */
+        'port' => 3306,
+        /**
+         * Name der Datenbank
+         */
+        'databasename' => '',
+        /**
+         * Pfad zu mysqldump
+         */
+        'mysqldumppath' => '',
+        /**
+         * Optionen für mysqldump (Option --opt ist standartmässig aktiviert)
+         */
+        'mysqldumpoptions' => '--allow-keywords --single-transaction',
+                /**
+         * Name des Backup-Buckets
+         */
+        'bucketname' => '',
+    ),
 );

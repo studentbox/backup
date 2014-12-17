@@ -111,5 +111,4 @@ class S3Backup
         }
         return $success;
     }
-
 }

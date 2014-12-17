@@ -21,6 +21,7 @@ require 'vendor/autoload.php';
 
 use Aws\S3\S3Client;
 use Studentbox\Backup\S3Backup;
+use Studentbox\Backup\Database;
 
 $config = require 'config/local.php';
 
@@ -39,3 +40,6 @@ if($s3Backup->backupToS3()) {
 } else {
     echo 'Backup fehlgeschlagen';
 }
+
+$database = new Database($s3Client, $config['database']);
+$database->backupDatabase();
