@@ -5,7 +5,6 @@
     xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.3/phpunit.xsd"
     backupGlobals="false"
     bootstrap="../vendor/autoload.php"
-    strict="true"
     verbose="true"
     timeoutForSmallTests="10">
     <testsuites>
