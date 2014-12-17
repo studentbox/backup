@@ -33,14 +33,19 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
     protected $bucketName = 'my-bucket';
 
     /**
-     * @var S3Client S3-Client Mock
+     * @var array Array mit Verzeichnissen
      */
-    protected $client;
+    protected $folders;
 
     /**
      * @var array Testkonfiguration
      */
     protected $config;
+
+    /**
+     * @var S3Client S3-Client Mock
+     */
+    protected $s3Client;
 
     /**
      * @var S3Backup Testobjekt
@@ -53,11 +58,19 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->client = $this->getMockBuilder('Aws\S3\S3Client')
+        $this->folders = array(
+            'directory/test',
+            'folder/directory',
+            'folder/test',
+        );
+        $this->config = array(
+            'bucketname' => $this->bucketName,
+            'folders' => $this->folders,
+        );
+        $this->s3Client = $this->getMockBuilder('Aws\S3\S3Client')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->s3Backup = new S3Backup($this->client);
-        $this->s3Backup->setBucketName($this->bucketName);
+        $this->s3Backup = new S3Backup($this->s3Client, array());
     }
 
     /**
@@ -66,10 +79,11 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
     public function testBackupToS3WithOneFolder()
     {
         $folder = array('folder/directory');
-        $this->client->expects($this->once())
+        $this->s3Client->expects($this->once())
                 ->method('uploadDirectory')
                 ->with($folder[0], $this->bucketName, $this->isType('string'));
         $this->s3Backup->setFolders($folder);
+        $this->s3Backup->setBucketName($this->bucketName);
 
         $this->assertTrue($this->s3Backup->backupToS3());
     }
@@ -84,12 +98,12 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
             'folder/directory',
             'folder/test',
         );
-        $this->s3Backup->setFolders($folders);
 
-
-        $this->client->expects($this->exactly(3))
+        $this->s3Client->expects($this->exactly(3))
                 ->method('uploadDirectory')
                 ->with($this->isType('string'), $this->bucketName, $this->isType('string'));
+        $this->s3Backup->setFolders($folders);
+        $this->s3Backup->setBucketName($this->bucketName);
 
         $this->assertTrue($this->s3Backup->backupToS3());
     }
@@ -99,8 +113,7 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
      */
     public function testBackupToS3WithEmptyBucketName()
     {
-        $folder = array('folder/directory');
-        $this->s3Backup->setFolders($folder);
+        $this->s3Backup->setFolders($this->folders);
         $this->s3Backup->setBucketName('');
 
         $this->assertFalse($this->s3Backup->backupToS3());
@@ -117,20 +130,39 @@ class S3BackupTest extends \PHPUnit_Framework_TestCase
     /**
      * Testet getBucketName.
      */
-    public function testGetBucketName()
+    public function testSetGetBucketName()
     {
-        $bucket = "my-bucket";
-        $this->s3Backup->setBucketName($bucket);
-        $this->assertEquals($bucket, $this->s3Backup->getBucketName());
+        $this->s3Backup->setBucketName($this->bucketName);
+        $this->assertEquals($this->bucketName, $this->s3Backup->getBucketName());
     }
 
     /**
      * Testet getBucketName.
      */
-    public function testGetFolders()
+    public function testSetGetFolders()
     {
-        $folders = array('../test/directory');
-        $this->s3Backup->setFolders($folders);
-        $this->assertEquals($folders, $this->s3Backup->getFolders());
+        $this->s3Backup->setFolders($this->folders);
+        $this->assertEquals($this->folders, $this->s3Backup->getFolders());
     }
+
+    /**
+     * Testet die Getter/Setter der Einstellungen mit einem Array.
+     */
+    public function testSetGetSettingsWithArray()
+    {
+        $this->s3Backup->setSettings($this->config);
+        $this->assertEquals($this->bucketName, $this->s3Backup->getBucketName());
+        $this->assertEquals($this->folders, $this->s3Backup->getFolders());
+        $this->assertNotEmpty($this->s3Backup->getSettings());
+    }
+
+    /**
+     * Testet die Einstellungen über den Konstruktor.
+     */
+    public function testSettingsOverConstructor()
+    {
+        $s3Backup = new S3Backup($this->s3Client, $this->config);
+        $this->assertEquals($this->config, $s3Backup->getSettings());
+    }
+
 }

@@ -31,15 +31,8 @@ $s3Client = S3Client::factory(array(
             'region' => $config['s3backup']['region'],
         ));
 
-$s3Backup = new S3Backup($s3Client);
-$s3Backup->setBucketName($config['s3backup']['bucketname']);
-$s3Backup->setFolders($config['s3backup']['folders']);
-
-if($s3Backup->backupToS3()) {
-    echo 'Backup der Verzeichnisse ' . implode(", ", $config['s3backup']['folders']) . ' erfolgreich';
-} else {
-    echo 'Backup fehlgeschlagen';
-}
+$s3Backup = new S3Backup($s3Client, $config['s3backup']);
+$s3Backup->backupToS3();
 
 $database = new Database($s3Client, $config['database']);
 $database->backupDatabase();

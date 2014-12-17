@@ -30,6 +30,11 @@ class S3Backup
 {
 
     /**
+     * @var S3Client S3-Client
+     */
+    protected $s3Client;
+
+    /**
      * @var string Bucketname
      */
     protected $bucketName;
@@ -40,18 +45,22 @@ class S3Backup
     protected $folders;
 
     /**
-     * @var S3Client S3-Client
+     * @var array Array mit Einstellungen
      */
-    protected $client;
+    protected $settings = array();
 
     /**
      * Erstellt ein S3Backup wenn ein S3-Client übergeben wurde.
      *
-     * @param S3Client $client
+     * @param S3Client $s3Client
      */
-    public function __construct(S3Client $client)
+    public function __construct(S3Client $s3Client, array $settings)
     {
-        $this->client = $client;
+        $this->s3Client = $s3Client;
+
+        if (!empty($settings)) {
+            $this->setSettings($settings);
+        }
     }
 
     /**
@@ -75,23 +84,55 @@ class S3Backup
     }
 
     /**
+     * Liefert ein Array mit Einstellungen zurück.
+     * 
+     * @return array Einstellungs-Array
+     */
+    public function getSettings()
+    {
+        return $this->settings;
+    }
+
+    /**
      * Setzt den Bucket-Namen.
      *
      * @param string $bucket
+     * @return \Studentbox\Backup\S3Backup
      */
     public function setBucketName($bucket)
     {
         $this->bucketName = $bucket;
+        return $this;
     }
 
     /**
      * Setzt das Ordner-Array.
      *
      * @param array $folders
+     * @return \Studentbox\Backup\S3Backup
      */
     public function setFolders($folders)
     {
         $this->folders = $folders;
+        return $this;
+    }
+
+    /**
+     * Setzt das Einstellungs-Array.
+     * 
+     * @param array $settings
+     * @return \Studentbox\Backup\S3Backup
+     */
+    public function setSettings($settings)
+    {
+        if (isset($settings['bucketname'])) {
+            $this->setBucketName($settings['bucketname']);
+        }
+        if (isset($settings['folders'])) {
+            $this->setFolders($settings['folders']);
+        }
+        $this->settings = $settings;
+        return $this;
     }
 
     /**
@@ -101,14 +142,20 @@ class S3Backup
      */
     public function backupToS3()
     {
-        $success = false;
-        if (!empty($this->bucketName) and ! empty($this->folders)) {
+        try {
+            if (empty($this->bucketName) or empty($this->folders)) {
+                throw new \InvalidArgumentException('Invalid bucketname or foldername given');
+            }
             foreach ($this->folders as $folder) {
                 $virtualfolder = 'files/' . basename($folder);
-                $this->client->uploadDirectory($folder, $this->bucketName, $virtualfolder);
+                $this->s3Client->uploadDirectory($folder, $this->bucketName, $virtualfolder);
             }
             $success = true;
+        } catch (\Exception $ex) {
+            echo 'Backup der Verzeichnisse fehlgeschlagen: ' . $ex->getMessage();
+            $success = false;
         }
         return $success;
     }
+
 }
