@@ -80,8 +80,8 @@ class Database
     protected $settings = array();
 
     /**
+     * @param S3Client $s3Client S3-Client für das Backup
      * @param array $settings Einstellungen für die Datenbank
-     * @throws Exception Wenn keine/falsche Einstellungen übergeben wurden
      */
     public function __construct(S3Client $s3Client, array $settings)
     {
@@ -380,4 +380,5 @@ class Database
         ));
         return $result;
     }
+
 }
