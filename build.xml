@@ -40,7 +40,14 @@
         <property name="prepare.done" value="true"/>
     </target>
     
-    <target name="composer-self-update" description="Self-update Composer">
+    <target name="composer-check-phpunit" description="Check if phpunit is present">
+        <available file="${basedir}/vendor/bin/phpunit" property="phpunit.present"/>
+    </target>
+    
+    <target name="composer-self-update" 
+            depends="composer-check-phpunit" 
+            unless="phpunit.present" 
+            description="Self-update Composer" >        
         <exec executable="php">
             <arg value="${basedir}/build/tools/composer.phar" />
             <arg value="self-update" />
@@ -49,7 +56,10 @@
         </exec>
     </target>
     
-    <target name="composer-dev" depends="composer-self-update">
+    <target name="composer-dev" 
+            depends="composer-check-phpunit, composer-self-update" 
+            unless="phpunit.present"
+            description="Run composer in dev mode">        
         <condition property="composer.command" value="update" else="install">
             <available file="${basedir}/composer.lock"/>
         </condition>
@@ -61,7 +71,9 @@
         </exec>
     </target>
     
-    <target name="composer-no-dev" depends="composer-self-update">
+    <target name="composer-no-dev" 
+            depends="composer-self-update"
+            description="Run composer in no-dev mode">        
         <condition property="composer.command" value="update" else="install">
             <available file="${basedir}/composer.lock"/>
         </condition>
