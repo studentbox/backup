@@ -38,3 +38,23 @@ Das Backup-Skript benötigt folgende Berechtigungen um korrekt zu funktionieren:
   ]
 }
 ```
+
+## S3 Lifecycle
+
+Die Datenbank wird täglich gesichert. Nach einem Tag ist das Datenbank-Backup abgelaufen und nach 30 Tagen wird es permanent gelöscht. 
+
+Dateien werden täglich auf Änderungen überprüft. Kommt eine neue Version der Datei hinzu (auch Löschungen) wird die alte Version nach 30 Tagen gelöscht. Um diese Strategie umzusetzen wurden folgende Regeln definiert:
+
+```
+Datenbank
+---------
+Prefix:                       dbdumbs/
+Action on Current Version:    Expire 1 days after the object's creation date 
+Action on Previous Versions:  Permanently Delete 30 days after overwrite/expiration date.
+
+Dateien
+-------
+Prefix:                       files/
+Action on Current Version:    None
+Action on Previous Versions:  Permanently Delete 30 days after overwrite/expiration date.   
+```
