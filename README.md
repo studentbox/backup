@@ -15,3 +15,26 @@ git clone https://github.com/studentbox/backup
 url -sS https://getcomposer.org/installer | php
 php composer.phar install
 ```
+
+## S3 Berechtigungen
+
+Das Backup-Skript benötigt folgende Berechtigungen um korrekt zu funktionieren:
+
+```json
+{
+  "Version": "<Version>",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::<Bucket-Name>",
+        "arn:aws:s3:::<Bucket-Name>/*"
+      ]
+    }
+  ]
+}
+```
